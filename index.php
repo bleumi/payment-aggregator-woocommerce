@@ -311,10 +311,6 @@ function wc_bleumi_payment_aggregator_init()
                 $query_string = str_replace('&amp;', '&', $query_string);
                 parse_str($query_string, $data);
 
-                global $wp;
-                $order_id = absint($wp->query_vars['order-received']);
-                self::log('[INFO] order id: ' . $order_id);
-
                 if (isset($data['cancel_order']) && !is_null($data['cancel_order'])) {
                     if ($data['cancel_order'] == 'true') {
                         $order_id = $data['order_id'];
@@ -332,6 +328,10 @@ function wc_bleumi_payment_aggregator_init()
                 if (!is_wc_endpoint_url('order-received')) {
                     return;
                 }
+                
+                global $wp;
+                $order_id = absint($wp->query_vars['order-received']);
+                self::log('[INFO] order id: ' . $order_id);
 
                 if (!empty($order_id)) {
                     $response = Bleumi_APIHandler::sendRequest($order_id, "GET");
