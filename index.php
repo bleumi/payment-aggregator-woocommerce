@@ -1,12 +1,15 @@
 <?php
 
 /*
- * Plugin Name:  Bleumi Payments for WooCommerce
- * Description:  Accept Traditional and Crypto Currency Payments
- * Version:      1.0.0
- * Author:       Bleumi Inc
- * Author URI:   https://bleumi.com/
- * License:      Copyright 2020 Bleumi, MIT License
+
+Plugin Name:  Bleumi Payments for WooCommerce
+Description:  Accept Traditional and Crypto Currency Payments
+Version:      1.0.0
+Author:       Bleumi Inc
+Author URI:   https://bleumi.com/
+License:      Copyright 2020 Bleumi, MIT License
+License URI:  https://github.com/bleumi/payment-aggregator-woocommerce/blob/master/LICENSE
+GitHub Plugin URI: https://github.com/bleumi/payment-aggregator-woocommerce
  
 WC requires at least: 3.0.9
 WC tested up to: 5.2.2
