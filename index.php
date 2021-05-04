@@ -1,36 +1,29 @@
 <?php
 
 /*
-
-Plugin Name:  Bleumi Payments for WooCommerce
-Description:  Accept Traditional and Crypto Currency Payments
-Version:      1.0.0
-Author:       Bleumi Inc
-Author URI:   https://bleumi.com/
-License:      Copyright 2020 Bleumi, MIT License
-License URI:  https://github.com/bleumi/payment-aggregator-woocommerce/blob/master/LICENSE
-GitHub Plugin URI: https://github.com/bleumi/payment-aggregator-woocommerce
- 
-WC requires at least: 3.0.9
-WC tested up to: 5.2.2
-
+ * Plugin Name:  Bleumi Payments for WooCommerce
+ * Description:  Accept Traditional and Crypto Currency Payments
+ * Version:      1.0.0
+ * Author:       Bleumi Inc
+ * Author URI:   https://bleumi.com/
+ * License:      Copyright 2020 Bleumi, MIT License
 */
 
 if (!defined('ABSPATH')) :
     exit;
 endif;
 
-add_action('plugins_loaded', 'wc_bleumi_payment_aggregator_init');
+add_action('plugins_loaded', 'wc_bleumi_pa_init');
 
-function wc_bleumi_payment_aggregator_init()
+function wc_bleumi_pa_init()
 {
     if (class_exists('WC_Payment_Gateway')) {
-        define('BLEUMI_PLUGIN_URL', plugin_dir_url(__FILE__));
+        define('BLEUMI_PA_PLUGIN_URL', plugin_dir_url(__FILE__));
 
         /**
-         * WC_Gateway_Bleumi Class.
+         * WC_Gateway_Bleumi_PA Class.
          */
-        class WC_Gateway_Bleumi extends WC_Payment_Gateway
+        class WC_Gateway_Bleumi_PA extends WC_Payment_Gateway
         {
             /** @var bool Whether or not logging is enabled */
             public static $log_enabled = false;
@@ -44,7 +37,7 @@ function wc_bleumi_payment_aggregator_init()
             public function __construct()
             {
                 $this->id = 'bleumi';
-                $this->icon = apply_filters('woocommerce_bleumi_icon', BLEUMI_PLUGIN_URL . 'assets/images/Bleumi.png');
+                $this->icon = apply_filters('woocommerce_bleumi_pa_icon', BLEUMI_PLUGIN_URL . 'assets/images/Bleumi.png');
                 $this->has_fields = false;
                 $this->order_button_text = __('Pay with Bleumi', 'bleumi');
                 $this->method_title = __('Bleumi', 'bleumi');
@@ -67,7 +60,7 @@ function wc_bleumi_payment_aggregator_init()
                     'process_admin_options'
                 ));
 
-                add_action('woocommerce_api_wc_gateway_bleumi', array(
+                add_action('woocommerce_api_wc_gateway_bleumi_pa', array(
                     $this,
                     'ipn_callback'
                 ));
@@ -97,9 +90,9 @@ function wc_bleumi_payment_aggregator_init()
              */
             protected function init_api()
             {
-                include_once dirname(__FILE__) . '/lib/bleumi/class-bleumi-api-handler.php';
-                Bleumi_APIHandler::$log = get_class($this) . '::log';
-                Bleumi_APIHandler::$api_key = $this->get_option('api_key');
+                include_once dirname(__FILE__) . '/lib/bleumi-pa-api-handler.php';
+                Bleumi_PA_APIHandler::$log = get_class($this) . '::log';
+                Bleumi_PA_APIHandler::$api_key = $this->get_option('api_key');
             }
 
             /**
@@ -153,7 +146,7 @@ function wc_bleumi_payment_aggregator_init()
                         'default' => '',
                         'description' => sprintf(__('You can view and manage your Bleumi API keys from: <a href = "https://account.bleumi.com/account/?app=paymentlink&mode=production&tab=integration" target = "_blank">Bleumi Dashboard</a>', 'bleumi'), esc_url('https://account.bleumi.com')),
                     ),
-                    'bleumi_confirmed_status' => array(
+                    'bleumi_pa_confirmed_status' => array(
                         'title' => __('Order Status after Payment Confirmation', 'woocommerce'),
                         'type' => 'select',
                         'description' => __('Configure your Payment <b>Confirmation</b> status to one of the available WooCommerce order states.<br>All WooCommerce confirmation status options are listed here for your convenience.', 'woocommerce'),
@@ -165,7 +158,7 @@ function wc_bleumi_payment_aggregator_init()
                         'type' => 'checkbox',
                         'label' => __('Enable logging', 'woocommerce'),
                         'default' => 'no',
-                        'description' => sprintf(__('Log Bleumi API events inside %s', 'bleumi'), '<code>' . WC_Log_Handler_File::get_log_file_path('bleumi') . '</code>'),
+                        'description' => sprintf(__('Log Bleumi API events inside %s', 'bleumi'), '<code>' . WC_Log_Handler_File::get_log_file_path('bleumi_payment_aggregator') . '</code>'),
                     ),
                 );
             }
@@ -205,7 +198,7 @@ function wc_bleumi_payment_aggregator_init()
                     ),
                     "success_url" => $this->get_return_url($order),
                     "cancel_url" => $this->get_cancel_url($order),
-                    "notify_url" => str_replace('https:', 'http:', add_query_arg('wc-api', 'WC_Gateway_Bleumi', home_url('/'))),
+                    "notify_url" => str_replace('https:', 'http:', add_query_arg('wc-api', 'WC_Gateway_Bleumi_PA', home_url('/'))),
                     "record" => array(
                         "client_info" => array(
                             "type" => "individual",
@@ -223,7 +216,7 @@ function wc_bleumi_payment_aggregator_init()
                     )
                 );
 
-                $result = Bleumi_APIHandler::sendRequest($requestParams, "POST");
+                $result = Bleumi_PA_APIHandler::sendRequest($requestParams, "POST");
                 $order->save();
 
                 self::log('[INFO] Response: ' . print_r($result, true));
@@ -252,7 +245,7 @@ function wc_bleumi_payment_aggregator_init()
                     $order_id = intval($request['id']);
 
                     if (!empty($order_id)) {
-                        $response = Bleumi_APIHandler::sendRequest($order_id, "GET");
+                        $response = Bleumi_PA_APIHandler::sendRequest($order_id, "GET");
                         $this->update_order_status($order_id, $response);
                     }
                 } catch (\Throwable $th) {
@@ -288,7 +281,7 @@ function wc_bleumi_payment_aggregator_init()
                         } elseif ($amt_due < 0) {
                             $order->update_status('over-paid', __('Bleumi payment detected, Amount Over Paid.', 'bleumi'));
                         } else {
-                            $next_status = $this->get_option('bleumi_confirmed_status');
+                            $next_status = $this->get_option('bleumi_pa_confirmed_status');
 
                             if (isset($next_status)) {
                                 $order->update_status($next_status, __('Bleumi Payment Completed.', 'bleumi'));
@@ -305,7 +298,7 @@ function wc_bleumi_payment_aggregator_init()
             /**
              * Validate the payment and change order status accordingly.
              */
-            public function bleumi_verify_payment()
+            public function bleumi_pa_verify_payment()
             {
                 $this->init_api();
                 $order_id = '';
@@ -314,11 +307,15 @@ function wc_bleumi_payment_aggregator_init()
                 $query_string = str_replace('&amp;', '&', $query_string);
                 parse_str($query_string, $data);
 
+                global $wp;
+                $order_id = absint($wp->query_vars['order-received']);
+                self::log('[INFO] order id: ' . $order_id);
+
                 if (isset($data['cancel_order']) && !is_null($data['cancel_order'])) {
                     if ($data['cancel_order'] == 'true') {
                         $order_id = $data['order_id'];
                         if ($order_id != '') {
-                            self::log('[INFO] bleumi_verify_payment: user cancelled order-id:' . $order_id);
+                            self::log('[INFO] bleumi_pa_verify_payment: user cancelled order-id:' . $order_id);
                             $order = wc_get_order($order_id);
                             $order->update_status('cancelled', __('User cancelled payment.', 'bleumi'));
                             $order->save();
@@ -331,13 +328,9 @@ function wc_bleumi_payment_aggregator_init()
                 if (!is_wc_endpoint_url('order-received')) {
                     return;
                 }
-                
-                global $wp;
-                $order_id = absint($wp->query_vars['order-received']);
-                self::log('[INFO] order id: ' . $order_id);
 
                 if (!empty($order_id)) {
-                    $response = Bleumi_APIHandler::sendRequest($order_id, "GET");
+                    $response = Bleumi_PA_APIHandler::sendRequest($order_id, "GET");
                     $this->update_order_status($order_id, $response);
                 }
             }
@@ -364,9 +357,9 @@ function wc_bleumi_payment_aggregator_init()
  * Register wc-awaitingconfirm, wc-over-paid, wc_partially-paid statuses as valid for payment.
  */
 
-add_filter('woocommerce_valid_order_statuses_for_payment', 'bleumi_wc_status_valid_for_payment', 10, 2);
+add_filter('woocommerce_valid_order_statuses_for_payment', 'bleumi_pa_wc_status_valid_for_payment', 10, 2);
 
-function bleumi_wc_status_valid_for_payment($statuses, $order)
+function bleumi_pa_wc_status_valid_for_payment($statuses, $order)
 {
     $statuses[] = array(
         'wc-awaitingconfirm',
@@ -380,9 +373,9 @@ function bleumi_wc_status_valid_for_payment($statuses, $order)
  * Add registered status to list of WC Order statuses
  * @param array $wc_statuses_arr Array of all order statuses on the website.
  */
-add_filter('wc_order_statuses', 'bleumi_wc_add_status');
+add_filter('wc_order_statuses', 'bleumi_pa_wc_add_status');
 
-function bleumi_wc_add_status($wc_statuses_arr)
+function bleumi_pa_wc_add_status($wc_statuses_arr)
 {
     $new_statuses_arr = array();
 
@@ -407,9 +400,9 @@ function bleumi_wc_add_status($wc_statuses_arr)
  * with ID "wc-partially-paid" and label "Partially Paid"
  * with ID "wc-over-paid" and label "Over Paid"
  */
-add_action('init', 'bleumi_wc_register_new_statuses');
+add_action('init', 'bleumi_pa_wc_register_new_statuses');
 
-function bleumi_wc_register_new_statuses()
+function bleumi_pa_wc_register_new_statuses()
 {
     register_post_status('wc-awaitingconfirm', array(
         'label' => _x('Awaiting Payment Confirmation', 'WooCommerce Order status', 'bleumi'),
@@ -443,32 +436,32 @@ function bleumi_wc_register_new_statuses()
  * Add custom link
  * The url will be http://yourwordpress/wp-admin/admin.php?=wc-settings&tab=checkout
 */
-function bleumi_add_action_link_payment($links)
+function bleumi_pa_add_action_link_payment($links)
 {
     $plugin_links = array(
         '<a href="' . admin_url('admin.php?page=wc-settings&tab=checkout&section=bleumi') . '">' . __('Settings', 'bleumi') . '</a>',
     );
     return array_merge($plugin_links, $links);
 }
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'bleumi_add_action_link_payment');
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'bleumi_pa_add_action_link_payment');
 
-//To invoke the bleumi_verify_payment function
-function bleumi_validate_payment()
+//To invoke the bleumi_pa_verify_payment function
+function bleumi_pa_validate_payment()
 {
     $gateway = WC()->payment_gateways()
         ->payment_gateways()['bleumi'];
-    return $gateway->bleumi_verify_payment();
+    return $gateway->bleumi_pa_verify_payment();
 }
-add_action('template_redirect', 'bleumi_validate_payment');
+add_action('template_redirect', 'bleumi_pa_validate_payment');
 
 /*
  * Check Bleumi webhook request is valid.
  * @param  string $payload
 */
 
-add_filter('woocommerce_payment_gateways', 'wc_bleumi_payment_aggregator_add_to_gateways');
-function wc_bleumi_payment_aggregator_add_to_gateways($gateways)
+add_filter('woocommerce_payment_gateways', 'wc_bleumi_pa_add_to_gateways');
+function wc_bleumi_pa_add_to_gateways($gateways)
 {
-    $gateways[] = 'WC_Gateway_Bleumi';
+    $gateways[] = 'WC_Gateway_Bleumi_PA';
     return $gateways;
 }

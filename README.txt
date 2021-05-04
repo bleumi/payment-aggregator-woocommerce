@@ -2,9 +2,9 @@
 Contributors: bleumiinc
 Plugin URL: https://bleumi.com/
 Tags: payment-gateway, payment-processing, woocommerce-plugin, accept-crypto-payments, bleumi
-Requires at least: 4.9
-Requires PHP: 5.6
-Tested up to: 5.4
+Requires at least: 5.4
+Tested up to: 5.7.1
+Requires PHP: 7.0
 Stable tag: 1.0.0
 License: MIT
 License URI: https://github.com/bleumi/payment-aggregator-woocommerce/blob/master/LICENSE
