@@ -40,15 +40,20 @@ class Bleumi_PA_APIHandler
             'POST',
             'PUT'
         ))) {
-            self::log("[INFO] creating a payment request...");
+            self::log("[INFO] creating a payment request");
+
             $data_to_post = json_encode($requestParams);
+            self::log("[INFO] " . $data_to_post);
+
             $args = array(
                 'body'        => $data_to_post,
                 'headers'     => $headers,
             );
+
             $response =  wp_remote_post(self::$endpoint_url, $args);
         } else {
-            self::log("[INFO] fetching payment status...");
+            self::log("[INFO] fetching payment status");
+
             $order_id = json_encode($requestParams);
             $args = array(
                 'headers' => $headers,
@@ -62,10 +67,10 @@ class Bleumi_PA_APIHandler
         $http_code = wp_remote_retrieve_response_code($response);
 
         self::log('[INFO] HTTP status: ' . $http_code);
-
-        $response = json_decode($body, true);
+        self::log('[INFO] HTTP body: ' . $body);
 
         if ($http_code === 200) {
+            $response = json_decode($body, true);
             return $response;
         }
     }

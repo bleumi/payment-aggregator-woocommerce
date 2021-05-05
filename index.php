@@ -37,7 +37,7 @@ function wc_bleumi_pa_init()
             public function __construct()
             {
                 $this->id = 'bleumi';
-                $this->icon = apply_filters('woocommerce_bleumi_pa_icon', BLEUMI_PLUGIN_URL . 'assets/images/Bleumi.png');
+                $this->icon = apply_filters('woocommerce_bleumi_pa_icon', BLEUMI_PA_PLUGIN_URL . 'assets/images/Bleumi.png');
                 $this->has_fields = false;
                 $this->order_button_text = __('Pay with Bleumi', 'bleumi');
                 $this->method_title = __('Bleumi', 'bleumi');
@@ -170,7 +170,7 @@ function wc_bleumi_pa_init()
              */
             public function process_payment($order_id)
             {
-                self::log('[Info] Started process_payment() with Order ID: ' . $order_id . '...');
+                self::log('[INFO] Started process_payment() with Order ID: ' . $order_id . '...');
 
                 if (true === empty($order_id)) {
                     self::log('[Error] Order ID is missing. Validation failed. Unable to proceed.');
@@ -185,7 +185,7 @@ function wc_bleumi_pa_init()
                     throw new \Exception('Unable to retrieve the order details for Order ID ' . $order_id . '. Unable to proceed.');
                 }
 
-                self::log('[Info] Attempting to generate payment for Order ID: ' . $order->get_order_number() . '...');
+                self::log('[INFO] Attempting to generate payment for Order ID: ' . $order->get_order_number() . '...');
 
                 $this->init_api();
                 $requestParams = array(
@@ -307,10 +307,6 @@ function wc_bleumi_pa_init()
                 $query_string = str_replace('&amp;', '&', $query_string);
                 parse_str($query_string, $data);
 
-                global $wp;
-                $order_id = absint($wp->query_vars['order-received']);
-                self::log('[INFO] order id: ' . $order_id);
-
                 if (isset($data['cancel_order']) && !is_null($data['cancel_order'])) {
                     if ($data['cancel_order'] == 'true') {
                         $order_id = $data['order_id'];
@@ -328,6 +324,10 @@ function wc_bleumi_pa_init()
                 if (!is_wc_endpoint_url('order-received')) {
                     return;
                 }
+
+                global $wp;
+                $order_id = absint($wp->query_vars['order-received']);
+                self::log('[INFO] order id: ' . $order_id);
 
                 if (!empty($order_id)) {
                     $response = Bleumi_PA_APIHandler::sendRequest($order_id, "GET");
