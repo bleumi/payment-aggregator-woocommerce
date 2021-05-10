@@ -198,7 +198,7 @@ function wc_bleumi_pa_init()
                     ),
                     "success_url" => $this->get_return_url($order),
                     "cancel_url" => $this->get_cancel_url($order),
-                    "notify_url" => str_replace('https:', 'http:', add_query_arg('wc-api', 'WC_Gateway_Bleumi_PA', home_url('/'))),
+                    "notify_url" => WC()->api_request_url('WC_Gateway_Bleumi'),
                     "record" => array(
                         "client_info" => array(
                             "type" => "individual",
