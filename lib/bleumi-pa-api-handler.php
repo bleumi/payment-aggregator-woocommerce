@@ -48,6 +48,7 @@ class Bleumi_PA_APIHandler
             $args = array(
                 'body'        => $data_to_post,
                 'headers'     => $headers,
+                'timers'      => 120
             );
 
             $response =  wp_remote_post(self::$endpoint_url, $args);
@@ -57,6 +58,7 @@ class Bleumi_PA_APIHandler
             $order_id = json_encode($requestParams);
             $args = array(
                 'headers' => $headers,
+                'timers'      => 120
             );
 
             $response = wp_remote_get(self::$endpoint_url . $order_id, $args);
