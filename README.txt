@@ -3,9 +3,9 @@ Contributors: bleumiinc
 Plugin URL: https://bleumi.com/
 Tags: payment-gateway, payment-processing, woocommerce-plugin, accept-crypto-payments, bleumi
 Requires at least: 5.4
-Tested up to: 5.7.1
+Tested up to: 5.7.2
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: MIT
 License URI: https://github.com/bleumi/payment-aggregator-woocommerce/blob/master/LICENSE
 
@@ -23,7 +23,7 @@ Bleumi is an all-in-one global Payment Orchestration Platform. With this extensi
 
 To use this plugin with your WooCommerce store you will need:
 
-* WordPress(https://wordpress.org/) - tested from 4.9, tested up to 5.7.1
+* WordPress(https://wordpress.org/) - tested from 4.9, tested up to 5.7.2
 * WooCommerce(https://wordpress.org/plugins/woocommerce/ - tested from 3.0.9, tested up to 5.2.2
 
 If you want to know if Bleumi supports your system or if you face any integration problem, please reach us at support@bleumi.com
@@ -38,7 +38,7 @@ Step 1: Configure your Bleumi Account:
 
 Step 2: Install Bleumi Extension in Your WooCommerce Store
 
-* Download v1.0.0 from https://github.com/bleumi/payment-aggregator-woocommerce/releases/download/v1.0.0/bleumi-payments-for-woocommerce.zip
+* Download v1.0.1 from https://github.com/bleumi/payment-aggregator-woocommerce/releases/download/v1.0.1/bleumi-payments-for-woocommerce.zip
 * Upload the plugin to WordPress
 
 Step 3: Configure Bleumi Extension in Your WooCommerce Store
