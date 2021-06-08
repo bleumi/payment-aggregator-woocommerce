@@ -3,7 +3,7 @@
 /*
  * Plugin Name:  Bleumi Payments for WooCommerce
  * Description:  Accept Traditional and Crypto Currency Payments
- * Version:      1.0.1
+ * Version:      1.0.2
  * Author:       Bleumi Inc
  * Author URI:   https://bleumi.com/
  * License:      Copyright 2020 Bleumi, MIT License
