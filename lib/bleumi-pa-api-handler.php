@@ -48,7 +48,7 @@ class Bleumi_PA_APIHandler
             $args = array(
                 'body'        => $data_to_post,
                 'headers'     => $headers,
-                'timers'      => 120
+                'timeout'     => 120
             );
 
             $response =  wp_remote_post(self::$endpoint_url, $args);
@@ -58,10 +58,15 @@ class Bleumi_PA_APIHandler
             $order_id = json_encode($requestParams);
             $args = array(
                 'headers' => $headers,
-                'timers'      => 120
+                'timeout' => 120
             );
 
             $response = wp_remote_get(self::$endpoint_url . $order_id, $args);
+        }
+
+        if( is_wp_error( $response ) ) {
+            self::log("[INFO] HTTP Failed: " . $response->get_error_message());
+            return;
         }
 
         $body = wp_remote_retrieve_body($response);
