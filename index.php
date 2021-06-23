@@ -217,11 +217,17 @@ function wc_bleumi_pa_init()
                 );
 
                 $result = Bleumi_PA_APIHandler::sendRequest($requestParams, "POST");
-                $order->save();
 
                 self::log('[INFO] Response: ' . print_r($result, true));
-
                 if (!empty($result['payment_url'])) {
+                    $url_parts = parse_url($result['payment_url']);
+                    $params = array();
+                    parse_str($url_parts['query'], $params);
+                    $params['no_redirect'] = 'yes';
+                    $url_parts['query'] = http_build_query($params);
+                    $url = $url_parts['scheme'] . '://' . $url_parts['host'] . $url_parts['path'] . '?' . $url_parts['query'];
+                    $order->add_order_note('Bleumi Payment URL: ' . $url);
+                    $order->save();
                     return array(
                         'result' => 'success',
                         'redirect' => $result['payment_url'],
