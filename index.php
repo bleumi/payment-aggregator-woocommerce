@@ -264,7 +264,11 @@ function wc_bleumi_pa_init()
              */
             public function update_order_status($order_id, $response)
             {
-                if (!empty($response['record'])) {
+                $order = new WC_Order($order_id);
+                $current_bp_status = strtolower($order->get_status());
+                $valid_bp_statuses = array('pending', 'awaitingconfirm', 'partially-paid', 'over-paid');
+
+                if (in_array($current_bp_status, $valid_bp_statuses) && !empty($response['record'])) {
                     $amt_due = floatval($response['record']['amt_due']);
                     $amt_recv_pending = floatval($response['record']['amt_recv_online_pending']);
                     $order = new WC_Order($order_id);
@@ -294,7 +298,10 @@ function wc_bleumi_pa_init()
                             } else {
                                 $order->update_status('processing', __('Bleumi payment Completed.', 'bleumi'));
                             }
-
+                            $receipt = Bleumi_PA_APIHandler::sendRequest($order_id . '/receipts', "GET");
+                            $order->update_meta_data('Amount Paid', $receipt[0]['metadata']['paid']);
+                            $order->update_meta_data('Transaction Hash', $receipt[0]['metadata']['txn_hash']);
+                            $order->save();
                             self::log('[INFO] new order status: ' . $next_status);
                         }
                     }
@@ -459,6 +466,32 @@ function bleumi_pa_validate_payment()
     return $gateway->bleumi_pa_verify_payment();
 }
 add_action('template_redirect', 'bleumi_pa_validate_payment');
+
+
+/**
+ * Handle a custom query var to get orders with the meta.
+ * @param array $query - Args for WP_Query.
+ * @param array $query_vars - Query vars from WC_Order_Query.
+ * @return array modified $query
+ */
+function bleumi_pa_handle_custom_query_var($query, $query_vars)
+{
+    if (!empty($query_vars['Amount Paid'])) {
+        $query['meta_query'][] = array(
+            'key' => 'Amount Paid',
+            'value' => esc_attr($query_vars['Amount Paid']),
+        );
+    }
+    if (!empty($query_vars['Transaction Hash'])) {
+        $query['meta_query'][] = array(
+            'key' => 'Transaction Hash',
+            'value' => esc_attr($query_vars['Transaction Hash']),
+        );
+    }
+    return $query;
+}
+add_filter('woocommerce_order_data_store_cpt_get_orders_query', 'bleumi_pa_handle_custom_query_var', 10, 2);
+
 
 /*
  * Check Bleumi webhook request is valid.

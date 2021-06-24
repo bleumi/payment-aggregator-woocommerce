@@ -53,15 +53,12 @@ class Bleumi_PA_APIHandler
 
             $response =  wp_remote_post(self::$endpoint_url, $args);
         } else {
-            self::log("[INFO] fetching payment status");
-
-            $order_id = json_encode($requestParams);
+            self::log("[INFO] fetching payment data");
             $args = array(
                 'headers' => $headers,
                 'timeout' => 120
             );
-
-            $response = wp_remote_get(self::$endpoint_url . $order_id, $args);
+            $response = wp_remote_get(self::$endpoint_url . $requestParams, $args);
         }
 
         if( is_wp_error( $response ) ) {
