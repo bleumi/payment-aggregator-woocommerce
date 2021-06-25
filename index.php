@@ -299,8 +299,14 @@ function wc_bleumi_pa_init()
                                 $order->update_status('processing', __('Bleumi payment Completed.', 'bleumi'));
                             }
                             $receipt = Bleumi_PA_APIHandler::sendRequest($order_id . '/receipts', "GET");
-                            $order->update_meta_data('Amount Paid', $receipt[0]['metadata']['paid']);
-                            $order->update_meta_data('Transaction Hash', $receipt[0]['metadata']['txn_hash']);
+                            if (!empty($receipt[0]['metadata'])) {
+                                if (!empty($receipt[0]['metadata']['paid'])) {
+                                    $order->update_meta_data('Amount Paid', $receipt[0]['metadata']['paid']);
+                                }
+                                if (!empty($receipt[0]['metadata']['txn_hash'])) {
+                                    $order->update_meta_data('Transaction Hash', $receipt[0]['metadata']['txn_hash']);
+                                }
+                            }
                             $order->save();
                             self::log('[INFO] new order status: ' . $next_status);
                         }
