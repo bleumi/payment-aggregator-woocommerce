@@ -187,17 +187,21 @@ function wc_bleumi_pa_init()
 
                 self::log('[INFO] Attempting to generate payment for Order ID: ' . $order->get_order_number() . '...');
 
+                $uniq_order_id = $order->get_id() . '__' . time();
+		$success_url = str_replace($order->get_id(), $uniq_order_id, $this->get_return_url($order));
+		$cancel_url = str_replace($order->get_id(), $uniq_order_id, $this->get_cancel_url($order));
+
                 $this->init_api();
                 $requestParams = array(
-                    "id" => (string)$order->get_id(),
+                    "id" => $uniq_order_id,
                     "currency" => get_woocommerce_currency(),
                     "invoice_date" => intval(date("Ymd")),
                     "allow_partial_payments" => false,
                     "metadata" => array(
                         "no_invoice" => true
                     ),
-                    "success_url" => $this->get_return_url($order),
-                    "cancel_url" => $this->get_cancel_url($order),
+                    "success_url" => $success_url,
+                    "cancel_url" => $cancel_url,
                     "notify_url" => add_query_arg('wc-api', 'WC_Gateway_Bleumi_PA', trailingslashit(get_home_url())),
                     "record" => array(
                         "client_info" => array(
@@ -248,7 +252,7 @@ function wc_bleumi_pa_init()
                 try {
                     $body = file_get_contents("php://input");
                     $request = json_decode($body, true);
-                    $order_id = intval($request['id']);
+                    $order_id = $request['id'];
 
                     if (!empty($order_id)) {
                         $response = Bleumi_PA_APIHandler::sendRequest($order_id, "GET");
@@ -264,7 +268,7 @@ function wc_bleumi_pa_init()
              */
             public function update_order_status($order_id, $response)
             {
-                $order = new WC_Order($order_id);
+                $order = new WC_Order(intval(explode('__', $order_id)[0]));
                 $current_bp_status = strtolower($order->get_status());
                 $valid_bp_statuses = array('pending', 'awaitingconfirm', 'partially-paid', 'over-paid');
 
@@ -345,7 +349,7 @@ function wc_bleumi_pa_init()
                 }
 
                 global $wp;
-                $order_id = absint($wp->query_vars['order-received']);
+                $order_id = $wp->query_vars['order-received'];
                 self::log('[INFO] order id: ' . $order_id);
 
                 if (!empty($order_id)) {
