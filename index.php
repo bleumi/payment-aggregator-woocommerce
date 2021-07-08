@@ -188,8 +188,8 @@ function wc_bleumi_pa_init()
                 self::log('[INFO] Attempting to generate payment for Order ID: ' . $order->get_order_number() . '...');
 
                 $uniq_order_id = $order->get_id() . '__' . time();
-		$success_url = str_replace($order->get_id(), $uniq_order_id, $this->get_return_url($order));
-		$cancel_url = str_replace($order->get_id(), $uniq_order_id, $this->get_cancel_url($order));
+                $success_url = str_replace($order->get_id(), $uniq_order_id, $this->get_return_url($order));
+                $cancel_url = str_replace($order->get_id(), $uniq_order_id, $this->get_cancel_url($order));
 
                 $this->init_api();
                 $requestParams = array(
@@ -275,7 +275,7 @@ function wc_bleumi_pa_init()
                 if (in_array($current_bp_status, $valid_bp_statuses) && !empty($response['record'])) {
                     $amt_due = floatval($response['record']['amt_due']);
                     $amt_recv_pending = floatval($response['record']['amt_recv_online_pending']);
-                    $order = new WC_Order($order_id);
+                    $order = new WC_Order(intval(explode('__', $order_id)[0]));
 
                     self::log('[INFO] amt_due: ' . $amt_due);
                     self::log('[INFO] amt_recv_pending: ' . $amt_recv_pending);
