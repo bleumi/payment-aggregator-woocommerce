@@ -17,6 +17,8 @@ If you want to know if Bleumi supports your system or if you face any integratio
 
 ### Overview
 
+Please refer to the [Installation Guide](https://github.com/bleumi/payment-aggregator-woocommerce/blob/main/Bleumi%20Payments%20-%20Installation%20Guide%20for%20WooCommerce_v2.pdf) for complete details.
+
 **Step 1: Configure your Bleumi Account:**
 
 * Add gateway accounts in the [Bleumi Portal](https://account.bleumi.com/account/?app=paymentlink&tab=gateway)
