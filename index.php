@@ -334,7 +334,7 @@ function wc_bleumi_pa_init()
                     if ($data['cancel_order'] == 'true') {
                         $order_id = $data['order_id'];
                         if ($order_id !== '') {
-                            $order = new WC_Order(intval(explode('__', $order_id)[0]));
+                            $order = wc_get_order(intval(explode('__', $order_id)[0]));
                             if ($order !== false) {
                                 self::log('[INFO] bleumi_pa_verify_payment: user cancelled order-id:' . $order_id);
                                 $order->update_status('cancelled', __('User cancelled payment.', 'bleumi'));
