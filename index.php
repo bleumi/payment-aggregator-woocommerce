@@ -335,13 +335,12 @@ function wc_bleumi_pa_init()
                         $order_id = $data['order_id'];
                         if ($order_id !== '') {
                             $order = new WC_Order(intval(explode('__', $order_id)[0]));
-                            if (false === $order) {
-                                self::log('[Error] Unable to retrieve the order details for Order ID ' . $order_id . '. Unable to proceed.');
-                                throw new \Exception('Unable to retrieve the order details for Order ID ' . $order_id . '. Unable to proceed.');
+                            if ($order !== false) {
+                                self::log('[INFO] bleumi_pa_verify_payment: user cancelled order-id:' . $order_id);
+                                $order->update_status('cancelled', __('User cancelled payment.', 'bleumi'));
+                                $order->save();
                             }
-                            self::log('[INFO] bleumi_pa_verify_payment: user cancelled order-id:' . $order_id);
-                            $order->update_status('cancelled', __('User cancelled payment.', 'bleumi'));
-                            $order->save();
+                            
                             return;
                         }
                     }
