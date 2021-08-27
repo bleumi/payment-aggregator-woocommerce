@@ -27,7 +27,7 @@ Please refer to the [Installation Guide](https://github.com/bleumi/payment-aggre
 
 **Step 2: Install Bleumi Extension in Your WooCommerce Store**
 
-* Download v1.0.5 from [here](https://github.com/bleumi/payment-aggregator-woocommerce/releases/download/v1.0.5/bleumi-payments-for-woocommerce.zip)
+* Download v1.0.6 from [here](https://github.com/bleumi/payment-aggregator-woocommerce/releases/download/v1.0.6/bleumi-payments-for-woocommerce.zip)
 * Upload the plugin to WordPress
 
 **Step 3: Configure Bleumi Extension in Your WooCommerce Store**
