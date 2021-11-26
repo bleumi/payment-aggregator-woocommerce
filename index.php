@@ -270,7 +270,7 @@ function wc_bleumi_pa_init()
             {
                 $order = new WC_Order(intval(explode('__', $order_id)[0]));
                 $current_bp_status = strtolower($order->get_status());
-                $valid_bp_statuses = array('pending', 'awaitingconfirm', 'partially-paid', 'over-paid');
+                $valid_bp_statuses = array('pending', 'awaitingconfirm', 'partially-paid', 'over-paid', 'cancelled');
 
                 if (in_array($current_bp_status, $valid_bp_statuses) && !empty($response['record'])) {
                     $amt_due = floatval($response['record']['amt_due']);
@@ -340,7 +340,7 @@ function wc_bleumi_pa_init()
                                 $order->update_status('cancelled', __('User cancelled payment.', 'bleumi'));
                                 $order->save();
                             }
-                            
+
                             return;
                         }
                     }
