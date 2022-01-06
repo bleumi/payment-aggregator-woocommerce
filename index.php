@@ -121,23 +121,23 @@ function wc_bleumi_pa_init()
 
                 $this->form_fields = array(
                     'enabled' => array(
-                        'title' => __('Enable/Disable', 'woocommerce'),
+                        'title' => __('Enable/Disable', 'bleumi'),
                         'type' => 'checkbox',
                         'label' => __('Enable Bleumi Payments', 'bleumi'),
                         'default' => 'yes',
                     ),
                     'title' => array(
-                        'title' => __('Title', 'woocommerce'),
+                        'title' => __('Title', 'bleumi'),
                         'type' => 'text',
-                        'description' => __('This controls the title which the user sees during checkout.', 'woocommerce'),
+                        'description' => __('This controls the title which the user sees during checkout.', 'bleumi'),
                         'default' => __('Pay with Traditional or Crypto Currency', 'bleumi'),
                         'desc_tip' => true,
                     ),
                     'description' => array(
-                        'title' => __('Description', 'woocommerce'),
+                        'title' => __('Description', 'bleumi'),
                         'type' => 'text',
                         'desc_tip' => true,
-                        'description' => __('This is the message box that will appear on the <b>checkout page</b> when they select Bleumi Payments.', 'woocommerce'),
+                        'description' => __('This is the message box that will appear on the <b>checkout page</b> when they select Bleumi Payments.', 'bleumi'),
                         'default' => __('PayPal, Credit/Debit Card, Algorand, USD Coin, Celo, Celo Dollar, R-BTC, Dollar on Chain.'),
                     ),
                     'api_key' => array(
@@ -147,16 +147,22 @@ function wc_bleumi_pa_init()
                         'description' => sprintf(__('You can view and manage your Bleumi API keys from: <a href = "https://account.bleumi.com/account/?app=paymentlink&mode=production&tab=integration" target = "_blank">Bleumi Dashboard</a>', 'bleumi'), esc_url('https://account.bleumi.com')),
                     ),
                     'bleumi_pa_confirmed_status' => array(
-                        'title' => __('Order Status after Payment Confirmation', 'woocommerce'),
+                        'title' => __('Order Status after Payment Confirmation', 'bleumi'),
                         'type' => 'select',
-                        'description' => __('Configure your Payment <b>Confirmation</b> status to one of the available WooCommerce order states.<br>All WooCommerce confirmation status options are listed here for your convenience.', 'woocommerce'),
+                        'description' => __('Configure your Payment <b>Confirmation</b> status to one of the available WooCommerce order states.<br>All WooCommerce confirmation status options are listed here for your convenience.', 'bleumi'),
                         'options' => $next_statuses_arr,
                         'default' => 'processing',
                     ),
+                    'wallet_id' => array(
+                        'title' => __('Wallet ID', 'bleumi'),
+                        'type' => 'text',
+                        'default' => '',
+                        'description' => __('Your wallet ID for marketplace payments', 'bleumi'),
+                    ),
                     'debug' => array(
-                        'title' => __('Debug log', 'woocommerce'),
+                        'title' => __('Debug log', 'bleumi'),
                         'type' => 'checkbox',
-                        'label' => __('Enable logging', 'woocommerce'),
+                        'label' => __('Enable logging', 'bleumi'),
                         'default' => 'no',
                         'description' => sprintf(__('Log Bleumi API events inside %s', 'bleumi'), '<code>' . WC_Log_Handler_File::get_log_file_path('bleumi_payment_aggregator') . '</code>'),
                     ),
@@ -219,6 +225,17 @@ function wc_bleumi_pa_init()
                         )
                     )
                 );
+
+				do_action_ref_array('wc_bleumi_process_payment', array(&$order, &$requestParams));
+				if (isset($requestParams['split'])) {
+					foreach($requestParams['split'] as &$x) {
+						if ($x['destination'] == 'self') {
+                            $x['destination'] = $this->get_option('wallet_id');
+						}
+					}
+
+                	self::log('[INFO] Post Process Params: ' . print_r($requestParams, true));
+				}
 
                 $result = Bleumi_PA_APIHandler::sendRequest($requestParams, "POST");
 
