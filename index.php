@@ -1,5 +1,4 @@
 <?php
-
 /*
  * Plugin Name:  Bleumi Payments for WooCommerce
  * Description:  Accept Traditional and Crypto Currency Payments
@@ -9,7 +8,7 @@
  * License:      Copyright 2020 Bleumi, MIT License
 */
 
-if (!defined('ABSPATH')) :
+if (!defined('ABSPATH')):
     exit;
 endif;
 
@@ -17,7 +16,8 @@ add_action('plugins_loaded', 'wc_bleumi_pa_init');
 
 function wc_bleumi_pa_init()
 {
-    if (class_exists('WC_Payment_Gateway')) {
+    if (class_exists('WC_Payment_Gateway'))
+    {
         define('BLEUMI_PA_PLUGIN_URL', plugin_dir_url(__FILE__));
 
         /**
@@ -75,8 +75,10 @@ function wc_bleumi_pa_init()
              */
             public static function log($message, $level = 'info')
             {
-                if (self::$log_enabled) {
-                    if (empty(self::$log)) {
+                if (self::$log_enabled)
+                {
+                    if (empty(self::$log))
+                    {
                         self::$log = wc_get_logger();
                     }
                     self::$log->log($level, $message, array(
@@ -103,7 +105,8 @@ function wc_bleumi_pa_init()
             public function get_cancel_url($order)
             {
                 $return_url = $order->get_cancel_order_url();
-                if (is_ssl() || get_option('woocommerce_force_ssl_checkout') == 'yes') {
+                if (is_ssl() || get_option('woocommerce_force_ssl_checkout') == 'yes')
+                {
                     $return_url = str_replace('http:', 'https:', $return_url);
                 }
                 return apply_filters('woocommerce_get_cancel_url', $return_url, $order);
@@ -121,51 +124,51 @@ function wc_bleumi_pa_init()
 
                 $this->form_fields = array(
                     'enabled' => array(
-                        'title' => __('Enable/Disable', 'bleumi'),
+                        'title' => __('Enable/Disable', 'bleumi') ,
                         'type' => 'checkbox',
-                        'label' => __('Enable Bleumi Payments', 'bleumi'),
+                        'label' => __('Enable Bleumi Payments', 'bleumi') ,
                         'default' => 'yes',
-                    ),
+                    ) ,
                     'title' => array(
-                        'title' => __('Title', 'bleumi'),
+                        'title' => __('Title', 'bleumi') ,
                         'type' => 'text',
-                        'description' => __('This controls the title which the user sees during checkout.', 'bleumi'),
-                        'default' => __('Pay with Traditional or Crypto Currency', 'bleumi'),
+                        'description' => __('This controls the title which the user sees during checkout.', 'bleumi') ,
+                        'default' => __('Pay with Traditional or Crypto Currency', 'bleumi') ,
                         'desc_tip' => true,
-                    ),
+                    ) ,
                     'description' => array(
-                        'title' => __('Description', 'bleumi'),
+                        'title' => __('Description', 'bleumi') ,
                         'type' => 'text',
                         'desc_tip' => true,
-                        'description' => __('This is the message box that will appear on the <b>checkout page</b> when they select Bleumi Payments.', 'bleumi'),
-                        'default' => __('PayPal, Credit/Debit Card, Algorand, USD Coin, Celo, Celo Dollar, R-BTC, Dollar on Chain.'),
-                    ),
+                        'description' => __('This is the message box that will appear on the <b>checkout page</b> when they select Bleumi Payments.', 'bleumi') ,
+                        'default' => __('PayPal, Credit/Debit Card, Algorand, USD Coin, Celo, Celo Dollar, R-BTC, Dollar on Chain.') ,
+                    ) ,
                     'api_key' => array(
-                        'title' => __('API Key', 'bleumi'),
+                        'title' => __('API Key', 'bleumi') ,
                         'type' => 'password',
                         'default' => '',
-                        'description' => sprintf(__('You can view and manage your Bleumi API keys from: <a href = "https://account.bleumi.com/account/?app=paymentlink&mode=production&tab=integration" target = "_blank">Bleumi Dashboard</a>', 'bleumi'), esc_url('https://account.bleumi.com')),
-                    ),
+                        'description' => sprintf(__('You can view and manage your Bleumi API keys from: <a href = "https://account.bleumi.com/account/?app=paymentlink&mode=production&tab=integration" target = "_blank">Bleumi Dashboard</a>', 'bleumi') , esc_url('https://account.bleumi.com')) ,
+                    ) ,
                     'bleumi_pa_confirmed_status' => array(
-                        'title' => __('Order Status after Payment Confirmation', 'bleumi'),
+                        'title' => __('Order Status after Payment Confirmation', 'bleumi') ,
                         'type' => 'select',
-                        'description' => __('Configure your Payment <b>Confirmation</b> status to one of the available WooCommerce order states.<br>All WooCommerce confirmation status options are listed here for your convenience.', 'bleumi'),
+                        'description' => __('Configure your Payment <b>Confirmation</b> status to one of the available WooCommerce order states.<br>All WooCommerce confirmation status options are listed here for your convenience.', 'bleumi') ,
                         'options' => $next_statuses_arr,
                         'default' => 'processing',
-                    ),
+                    ) ,
                     'wallet_id' => array(
-                        'title' => __('Wallet ID', 'bleumi'),
+                        'title' => __('Wallet ID', 'bleumi') ,
                         'type' => 'text',
                         'default' => '',
-                        'description' => __('Your wallet ID for marketplace payments', 'bleumi'),
-                    ),
+                        'description' => __('Your wallet ID for marketplace payments', 'bleumi') ,
+                    ) ,
                     'debug' => array(
-                        'title' => __('Debug log', 'bleumi'),
+                        'title' => __('Debug log', 'bleumi') ,
                         'type' => 'checkbox',
-                        'label' => __('Enable logging', 'bleumi'),
+                        'label' => __('Enable logging', 'bleumi') ,
                         'default' => 'no',
-                        'description' => sprintf(__('Log Bleumi API events inside %s', 'bleumi'), '<code>' . WC_Log_Handler_File::get_log_file_path('bleumi_payment_aggregator') . '</code>'),
-                    ),
+                        'description' => sprintf(__('Log Bleumi API events inside %s', 'bleumi') , '<code>' . WC_Log_Handler_File::get_log_file_path('bleumi_payment_aggregator') . '</code>') ,
+                    ) ,
                 );
             }
 
@@ -178,7 +181,8 @@ function wc_bleumi_pa_init()
             {
                 self::log('[INFO] Started process_payment() with Order ID: ' . $order_id . '...');
 
-                if (true === empty($order_id)) {
+                if (true === empty($order_id))
+                {
                     self::log('[Error] Order ID is missing. Validation failed. Unable to proceed.');
                     throw new \Exception('Order ID is missing. Validation failed. Unable to proceed.');
                 }
@@ -186,7 +190,8 @@ function wc_bleumi_pa_init()
                 global $woocommerce;
                 $order = new WC_Order($order_id);
 
-                if (false === $order) {
+                if (false === $order)
+                {
                     self::log('[Error] Unable to retrieve the order details for Order ID ' . $order_id . '. Unable to proceed.');
                     throw new \Exception('Unable to retrieve the order details for Order ID ' . $order_id . '. Unable to proceed.');
                 }
@@ -194,31 +199,31 @@ function wc_bleumi_pa_init()
                 self::log('[INFO] Attempting to generate payment for Order ID: ' . $order->get_order_number() . '...');
 
                 $uniq_order_id = $order->get_id() . '__' . time();
-                $success_url = str_replace($order->get_id(), $uniq_order_id, $this->get_return_url($order));
-                $cancel_url = str_replace($order->get_id(), $uniq_order_id, $this->get_cancel_url($order));
+                $success_url = str_replace($order->get_id() , $uniq_order_id, $this->get_return_url($order));
+                $cancel_url = str_replace($order->get_id() , $uniq_order_id, $this->get_cancel_url($order));
 
                 $this->init_api();
                 $requestParams = array(
                     "id" => $uniq_order_id,
-                    "currency" => get_woocommerce_currency(),
-                    "invoice_date" => intval(date("Ymd")),
+                    "currency" => get_woocommerce_currency() ,
+                    "invoice_date" => intval(date("Ymd")) ,
                     "allow_partial_payments" => false,
                     "metadata" => array(
                         "no_invoice" => true
-                    ),
+                    ) ,
                     "success_url" => $success_url,
                     "cancel_url" => $cancel_url,
-                    "notify_url" => add_query_arg('wc-api', 'WC_Gateway_Bleumi_PA', trailingslashit(get_home_url())),
+                    "notify_url" => add_query_arg('wc-api', 'WC_Gateway_Bleumi_PA', trailingslashit(get_home_url())) ,
                     "record" => array(
                         "client_info" => array(
                             "type" => "individual",
-                            "name" => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()),
+                            "name" => trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ,
                             "email" => $order->get_billing_email()
-                        ),
+                        ) ,
                         "line_item" => array(
                             array(
                                 "name" => "Order",
-                                "description" => "#" . $order->get_id(),
+                                "description" => "#" . $order->get_id() ,
                                 "quantity" => 1,
                                 "rate" => $order->get_total()
                             )
@@ -226,21 +231,26 @@ function wc_bleumi_pa_init()
                     )
                 );
 
-				do_action_ref_array('wc_bleumi_process_payment', array(&$order, &$requestParams));
-				if (isset($requestParams['split'])) {
-					foreach($requestParams['split'] as &$x) {
-						if ($x['destination'] == 'self') {
+                do_action_ref_array('wc_bleumi_process_payment', array(&$order, &$requestParams));
+                
+                if (isset($requestParams['split']))
+                {
+                    foreach ($requestParams['split'] as & $x)
+                    {
+                        if ($x['destination'] == 'self')
+                        {
                             $x['destination'] = $this->get_option('wallet_id');
-						}
-					}
+                        }
+                    }
 
-                	self::log('[INFO] Post Process Params: ' . print_r($requestParams, true));
-				}
+                    self::log('[INFO] Post Process Params: ' . print_r($requestParams, true));
+                }
 
                 $result = Bleumi_PA_APIHandler::sendRequest($requestParams, "POST");
 
                 self::log('[INFO] Response: ' . print_r($result, true));
-                if (!empty($result['payment_url'])) {
+                if (!empty($result['payment_url']))
+                {
                     $url_parts = parse_url($result['payment_url']);
                     $params = array();
                     parse_str($url_parts['query'], $params);
@@ -253,7 +263,9 @@ function wc_bleumi_pa_init()
                         'result' => 'success',
                         'redirect' => $result['payment_url'],
                     );
-                } else {
+                }
+                else
+                {
                     return array(
                         'result' => 'fail',
                     );
@@ -266,17 +278,21 @@ function wc_bleumi_pa_init()
             public function ipn_callback()
             {
                 $this->init_api();
-                try {
+                try
+                {
                     $body = file_get_contents("php://input");
                     $request = json_decode($body, true);
                     $order_id = $request['id'];
 
-                    if (!empty($order_id)) {
+                    if (!empty($order_id))
+                    {
                         $response = Bleumi_PA_APIHandler::sendRequest($order_id, "GET");
                         $this->update_order_status($order_id, $response);
                     }
-                } catch (\Throwable $th) {
-                    self::log('[ERROR] Bleumi payment validation failed ' . filter_input(INPUT_GET, 'order_id'), ["exception" => $th]);
+                }
+                catch(\Throwable $th)
+                {
+                    self::log('[ERROR] Bleumi payment validation failed ' . filter_input(INPUT_GET, 'order_id') , ["exception" => $th]);
                 }
             }
 
@@ -285,51 +301,82 @@ function wc_bleumi_pa_init()
              */
             public function update_order_status($order_id, $response)
             {
-                $order = new WC_Order(intval(explode('__', $order_id)[0]));
+                $wc_order_id = intval(explode('__', $order_id) [0]);
+                $order = new WC_Order($wc_order_id);
                 $current_bp_status = strtolower($order->get_status());
-                $valid_bp_statuses = array('pending', 'awaitingconfirm', 'partially-paid', 'over-paid', 'cancelled');
+                $valid_bp_statuses = array(
+                    'pending',
+                    'awaitingconfirm',
+                    'partially-paid',
+                    'over-paid',
+                    'cancelled'
+                );
 
-                if (in_array($current_bp_status, $valid_bp_statuses) && !empty($response['record'])) {
+                if (in_array($current_bp_status, $valid_bp_statuses) && !empty($response['record']))
+                {
                     $amt_due = floatval($response['record']['amt_due']);
                     $amt_recv_pending = floatval($response['record']['amt_recv_online_pending']);
-                    $order = new WC_Order(intval(explode('__', $order_id)[0]));
+                    $order = new WC_Order($wc_order_id);
 
                     self::log('[INFO] amt_due: ' . $amt_due);
                     self::log('[INFO] amt_recv_pending: ' . $amt_recv_pending);
                     self::log('[INFO] total: ' . $response['record']['total']);
 
-                    if ($amt_recv_pending > 0) {
+                    if ($amt_recv_pending > 0)
+                    {
                         $order->update_status('awaitingconfirm', __('Bleumi payment detected, but awaiting confirmation.', 'bleumi'));
-                    } else {
-                        if ($amt_due > 0) {
-                            if ($response['record']['amt_due'] === $response['record']['total']) {
+                    }
+                    else
+                    {
+                        if ($amt_due > 0)
+                        {
+                            if ($response['record']['amt_due'] === $response['record']['total'])
+                            {
                                 $this->log('user marked as paid');
                                 $order->add_order_note('User marked as paid, payment not verified by Bleumi');
                                 return;
-                            } else {
+                            }
+                            else
+                            {
                                 $order->update_status('partially-paid', __('Bleumi payment detected, Amount Partially Paid.', 'bleumi'));
                             }
-                        } elseif ($amt_due < 0) {
+                        }
+                        elseif ($amt_due < 0)
+                        {
                             $order->update_status('over-paid', __('Bleumi payment detected, Amount Over Paid.', 'bleumi'));
-                        } else {
+                            
+                            do_action('wc_bleumi_complete_payment', $wc_order_id);
+                        }
+                        else
+                        {
                             $next_status = $this->get_option('bleumi_pa_confirmed_status');
 
-                            if (isset($next_status)) {
+                            if (isset($next_status))
+                            {
                                 $order->update_status($next_status, __('Bleumi Payment Completed.', 'bleumi'));
-                            } else {
+                            }
+                            else
+                            {
                                 $order->update_status('processing', __('Bleumi payment Completed.', 'bleumi'));
                             }
+                            
                             $receipt = Bleumi_PA_APIHandler::sendRequest($order_id . '/receipts', "GET");
-                            if (!empty($receipt[0]['metadata'])) {
-                                if (!empty($receipt[0]['metadata']['paid'])) {
+                            if (!empty($receipt[0]['metadata']))
+                            {
+                                if (!empty($receipt[0]['metadata']['paid']))
+                                {
                                     $order->update_meta_data('Amount Paid', $receipt[0]['metadata']['paid']);
                                 }
-                                if (!empty($receipt[0]['metadata']['txn_hash'])) {
+                                if (!empty($receipt[0]['metadata']['txn_hash']))
+                                {
                                     $order->update_meta_data('Transaction Hash', $receipt[0]['metadata']['txn_hash']);
                                 }
                             }
+                            
                             $order->save();
                             self::log('[INFO] new order status: ' . $next_status);
+                            
+                            do_action('wc_bleumi_complete_payment', $wc_order_id);
                         }
                     }
                 }
@@ -347,12 +394,16 @@ function wc_bleumi_pa_init()
                 $query_string = str_replace('&amp;', '&', $query_string);
                 parse_str($query_string, $data);
 
-                if (isset($data['cancel_order']) && !is_null($data['cancel_order'])) {
-                    if ($data['cancel_order'] == 'true') {
+                if (isset($data['cancel_order']) && !is_null($data['cancel_order']))
+                {
+                    if ($data['cancel_order'] == 'true')
+                    {
                         $order_id = $data['order_id'];
-                        if ($order_id !== '') {
-                            $order = wc_get_order(intval(explode('__', $order_id)[0]));
-                            if ($order !== false) {
+                        if ($order_id !== '')
+                        {
+                            $order = wc_get_order(intval(explode('__', $order_id) [0]));
+                            if ($order !== false)
+                            {
                                 self::log('[INFO] bleumi_pa_verify_payment: user cancelled order-id:' . $order_id);
                                 $order->update_status('cancelled', __('User cancelled payment.', 'bleumi'));
                                 $order->save();
@@ -364,7 +415,8 @@ function wc_bleumi_pa_init()
                 }
 
                 /* do not proceed to validate if we are not on the appropriate page */
-                if (!is_wc_endpoint_url('order-received')) {
+                if (!is_wc_endpoint_url('order-received'))
+                {
                     return;
                 }
 
@@ -372,23 +424,29 @@ function wc_bleumi_pa_init()
                 $order_id = $wp->query_vars['order-received'];
                 self::log('[INFO] order id: ' . $order_id);
 
-                if (!empty($order_id)) {
+                if (!empty($order_id))
+                {
                     $response = Bleumi_PA_APIHandler::sendRequest($order_id, "GET");
                     $this->update_order_status($order_id, $response);
                 }
             }
         }
-    } else {
+    }
+    else
+    {
         global $wpdb;
-        if (!function_exists('get_plugins')) {
+        if (!function_exists('get_plugins'))
+        {
             require_once ABSPATH . 'wp-admin/includes/plugin.php';
         }
 
         $plugins_url = admin_url('plugins.php');
 
         $plugins = get_plugins();
-        foreach ($plugins as $file => $plugin) {
-            if ('Bleumi Payments for WooCommerce' === $plugin['Name'] && true === is_plugin_active($file)) {
+        foreach ($plugins as $file => $plugin)
+        {
+            if ('Bleumi Payments for WooCommerce' === $plugin['Name'] && true === is_plugin_active($file))
+            {
                 deactivate_plugins(plugin_basename(__FILE__));
                 wp_die('WooCommerce needs to be installed and activated before Bleumi Payments for WooCommerce can be activated.<br><a href="' . $plugins_url . '">Return to plugins screen</a>');
             }
@@ -423,10 +481,12 @@ function bleumi_pa_wc_add_status($wc_statuses_arr)
     $new_statuses_arr = array();
 
     // Add new order statuses after payment pending.
-    foreach ($wc_statuses_arr as $id => $label) {
+    foreach ($wc_statuses_arr as $id => $label)
+    {
         $new_statuses_arr[$id] = $label;
 
-        if ('wc-pending' === $id) { // after "Payment Pending" status.
+        if ('wc-pending' === $id)
+        { // after "Payment Pending" status.
             $new_statuses_arr['wc-awaitingconfirm'] = __('Awaiting Payment Confirmation', 'bleumi');
             $new_statuses_arr['wc-over-paid'] = __('Over Paid', 'bleumi');
             $new_statuses_arr['wc-partially-paid'] = __('Partially Paid', 'bleumi');
@@ -435,7 +495,6 @@ function bleumi_pa_wc_add_status($wc_statuses_arr)
 
     return $new_statuses_arr;
 }
-
 
 /**
  * Register new statuses
@@ -448,30 +507,30 @@ add_action('init', 'bleumi_pa_wc_register_new_statuses');
 function bleumi_pa_wc_register_new_statuses()
 {
     register_post_status('wc-awaitingconfirm', array(
-        'label' => _x('Awaiting Payment Confirmation', 'WooCommerce Order status', 'bleumi'),
+        'label' => _x('Awaiting Payment Confirmation', 'WooCommerce Order status', 'bleumi') ,
         'public' => true,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
         'exclude_from_search' => false,
-        'label_count' => _n_noop('Awaiting Payment Confirmation <span class="count">(%s)</span>', 'Awaiting Payment Confirmation <span class="count">(%s)</span>'),
+        'label_count' => _n_noop('Awaiting Payment Confirmation <span class="count">(%s)</span>', 'Awaiting Payment Confirmation <span class="count">(%s)</span>') ,
     ));
 
     register_post_status('wc-partially-paid', array(
-        'label' => _x('Partially Paid', 'WooCommerce Order status', 'bleumi'),
+        'label' => _x('Partially Paid', 'WooCommerce Order status', 'bleumi') ,
         'public' => true,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
         'exclude_from_search' => false,
-        'label_count' => _n_noop('Partially Paid <span class="count">(%s)</span>', 'Partially Paid <span class="count">(%s)</span>'),
+        'label_count' => _n_noop('Partially Paid <span class="count">(%s)</span>', 'Partially Paid <span class="count">(%s)</span>') ,
     ));
 
     register_post_status('wc-over-paid', array(
-        'label' => _x('Over Paid', 'WooCommerce Order status', 'bleumi'),
+        'label' => _x('Over Paid', 'WooCommerce Order status', 'bleumi') ,
         'public' => true,
         'show_in_admin_all_list' => true,
         'show_in_admin_status_list' => true,
         'exclude_from_search' => false,
-        'label_count' => _n_noop('Over Paid <span class="count">(%s)</span>', 'Over Paid <span class="count">(%s)</span>'),
+        'label_count' => _n_noop('Over Paid <span class="count">(%s)</span>', 'Over Paid <span class="count">(%s)</span>') ,
     ));
 }
 
@@ -486,17 +545,16 @@ function bleumi_pa_add_action_link_payment($links)
     );
     return array_merge($plugin_links, $links);
 }
-add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'bleumi_pa_add_action_link_payment');
+add_filter('plugin_action_links_' . plugin_basename(__FILE__) , 'bleumi_pa_add_action_link_payment');
 
 //To invoke the bleumi_pa_verify_payment function
 function bleumi_pa_validate_payment()
 {
     $gateway = WC()->payment_gateways()
-        ->payment_gateways()['bleumi'];
+        ->payment_gateways() ['bleumi'];
     return $gateway->bleumi_pa_verify_payment();
 }
 add_action('template_redirect', 'bleumi_pa_validate_payment');
-
 
 /**
  * Handle a custom query var to get orders with the meta.
@@ -506,22 +564,23 @@ add_action('template_redirect', 'bleumi_pa_validate_payment');
  */
 function bleumi_pa_handle_custom_query_var($query, $query_vars)
 {
-    if (!empty($query_vars['Amount Paid'])) {
+    if (!empty($query_vars['Amount Paid']))
+    {
         $query['meta_query'][] = array(
             'key' => 'Amount Paid',
-            'value' => esc_attr($query_vars['Amount Paid']),
+            'value' => esc_attr($query_vars['Amount Paid']) ,
         );
     }
-    if (!empty($query_vars['Transaction Hash'])) {
+    if (!empty($query_vars['Transaction Hash']))
+    {
         $query['meta_query'][] = array(
             'key' => 'Transaction Hash',
-            'value' => esc_attr($query_vars['Transaction Hash']),
+            'value' => esc_attr($query_vars['Transaction Hash']) ,
         );
     }
     return $query;
 }
 add_filter('woocommerce_order_data_store_cpt_get_orders_query', 'bleumi_pa_handle_custom_query_var', 10, 2);
-
 
 /*
  * Check Bleumi webhook request is valid.
